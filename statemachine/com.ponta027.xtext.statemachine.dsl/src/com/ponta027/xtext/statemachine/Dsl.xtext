@@ -1,0 +1,47 @@
+grammar com.ponta027.xtext.statemachine.Dsl with org.eclipse.xtext.common.Terminals
+
+generate dsl "http://www.ponta027.com/xtext/statemachine/Dsl"
+
+//TODO:SubStateを作る
+Statemachine :
+	{Statemachine}
+	('events'
+		events+=Event+
+	'end')?
+	(
+		'resetEvents'
+		resetEvents+=[Event]+
+		'end'
+	)?
+	//初期状態
+	('initialState'
+		initialState=[State]
+	'end'
+	)?
+	('commands'
+		commands+=Command+
+	'end'
+	)?
+	state+=State*
+	
+;
+
+//StateMachineの必要なクラス
+// Event,Command,State,Transition
+Event:
+	name=ID code=ID
+;	
+Command :
+	name=ID code=ID
+;
+
+State:
+	'state' name=ID
+		('actions {' actions+=[Command]+ '}')?
+		transitions += Transition*
+		subState +=State*
+	'end'
+;
+Transition:
+	event=[Event] '=>' state=[State]
+;
